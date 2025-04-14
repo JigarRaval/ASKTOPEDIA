@@ -1,0 +1,126 @@
+Asktopedia is a web app similar to Stack Overflow. In this application, all technical users can ask and clear their doubts with other registered developers.
+
+Unique features in this app:
+
+Developers can communicate and arrange meetups between them.
+Developers who post answers can also upload related material and documents for further reference.
+The platform provides support through sessions and online meetings.
+Our app gives various badges and appreciation rewards to developers once they earn certain badges. this is my project abstract so make fullyfunctional website .here are some cautions :1. react app must be created using vite only. 2.only external css are acceptable 3.backend must connectect with front end as well as database . 4. website must be responsive
+
+________________________________________________________________________________________________________________________________________________________________________________________________________
+
+Asktopedia/
+│── backend/             # Backend (Node.js, Express, MongoDB)
+│   ├── config/          # Config files (DB, env variables, etc.)
+│   │   ├── db.js        # MongoDB connection setup
+│   │   ├── cloudinary.js # Cloudinary file upload config
+│   │   └── jwt.js       # JWT config (refresh & access tokens)
+│   ├── controllers/     # Business logic for routes
+│   │   ├── authController.js
+│   │   ├── userController.js
+│   │   ├── questionController.js
+│   │   ├── answerController.js
+│   │   ├── uploadController.js
+│   │   ├── meetupController.js
+│   │   └── badgeController.js
+│   ├── middleware/      # Middleware for authentication, validation, etc.
+│   │   ├── authMiddleware.js
+│   │   ├── errorHandler.js
+│   │   └── upload.js    # Multer setup for file uploads
+│   ├── models/          # Mongoose schemas
+│   │   ├── User.js
+│   │   ├── Question.js
+│   │   ├── Answer.js
+│   │   ├── Badge.js
+│   │   ├── Meetup.js
+│   │   └── Report.js
+│   ├── routes/          # API endpoints
+│   │   ├── authRoutes.js
+│   │   ├── userRoutes.js
+│   │   ├── questionRoutes.js
+│   │   ├── answerRoutes.js
+│   │   ├── uploadRoutes.js
+│   │   ├── meetupRoutes.js
+│   │   ├── badgeRoutes.js
+│   │   ├── reportRoutes.js
+│   │   ├── adminRoutes.js
+│   │   └── index.js     # Main router file
+│   ├── services/        # Services (Email, Notifications, etc.)
+│   │   ├── emailService.js
+│   │   ├── badgeService.js
+│   │   ├── reportService.js
+│   │   └── meetupService.js
+│   ├── utils/           # Helper functions
+│   │   ├── errorHandler.js
+│   │   ├── response.js  # Standard response formatting
+│   │   ├── jwtUtils.js
+│   │   ├── passwordHash.js
+│   │   ├── fileUpload.js
+│   │   └── timeUtils.js
+│   ├── .env             # Environment variables
+│   ├── .gitignore       # Ignored files for Git
+│   ├── package.json     # Backend dependencies
+│   ├── server.js        # Main Express server file
+│   └── README.md        # Backend documentation
+│
+│── frontend/             # Frontend (React Vite)
+│   ├── public/          # Static files
+│   │   ├── index.html
+│   │   ├── favicon.ico
+│   │   ├── manifest.json
+│   │   └── robots.txt
+│   ├── src/             # React source code
+│   │   ├── assets/      # Images, icons, etc.
+│   │   ├── components/  # Reusable UI components
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Loader.jsx
+│   │   │   └── ProtectedRoute.jsx
+│   │   ├── pages/       # Individual pages
+│   │   │   ├── Home.jsx
+│   │   │   ├── About.jsx
+│   │   │   ├── AccountSettings.jsx
+│   │   │   ├── LandingPage.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── EditProfile.jsx
+│   │   │   ├── LandingPage.jsx
+│   │   │   ├── MyAnswers.jsx
+│   │   │   ├── MyQuestions.jsx
+│   │   │   ├── Profile.jsx
+│   │   │   ├── AskQuestion.jsx
+│   │   │   ├── QuestionDetail.jsx
+│   │   │   ├── Meetups.jsx
+│   │   │   ├── AdminPanel.jsx
+│   │   │   ├── Badges.jsx
+│   │   │   ├── Reports.jsx
+│   │   │   └── ErrorPage.jsx
+│   │   ├── context/     # State management
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── QuestionContext.jsx
+│   │   ├── hooks/       # Custom Hooks
+│   │   │   ├── useAuth.js
+│   │   │   ├── useFetch.js
+│   │   │   └── useTheme.js
+│   │   ├── services/    # API Calls (Axios)
+│   │   │   ├── authService.js
+│   │   │   ├── questionService.js
+│   │   │   ├── userService.js
+│   │   │   ├── answerService.js
+│   │   │   ├── meetupService.js
+│   │   │   └── badgeService.js
+|   |   ├── utils/            # Utility functions
+│   │   |   ├── api.js        # Base API URL configuration
+│   │   |   ├── helpers.js    # Helper functions (format dates, etc.)
+|   |   |  
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   ├── router.jsx   # React Router setup
+│   │   ├── config.js    # API endpoint configs
+│   │   └── index.js
+│   ├── .gitignore
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── README.md
+│   └── .env
