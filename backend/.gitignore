@@ -3,7 +3,8 @@ node_modules/
 dist/
 .vite/
 .cache/
-
+seed.js
+new1.js
 # Environment Variables
 
 .env
@@ -11,8 +12,7 @@ dist/
 .env.local
 .env.development
 .env.production
-seed.js
-new1.js
+
 
 # Log files
 npm-debug.log*
