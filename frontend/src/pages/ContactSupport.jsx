@@ -12,6 +12,7 @@ const ContactSupport = () => {
   });
 
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,22 +22,28 @@ const ContactSupport = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (
-      !formData.name.trim() ||
-      !formData.email.trim() ||
-      !formData.subject.trim() ||
-      !formData.message.trim()
-    ) {
-      setError("❌ All fields are required.");
-      toast.error("All fields are required.");
-      return;
-    }
+    setIsSubmitting(true);
 
     try {
-      // Mock submission - replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Your message has been sent successfully!");
+      const response = await fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle validation errors from backend
+        if (data.errors) {
+          throw new Error(data.errors.join(", "));
+        }
+        throw new Error(data.message || "Failed to send message");
+      }
+
+      toast.success(data.message || "Your message has been sent successfully!");
       setFormData({
         name: "",
         email: "",
@@ -44,107 +51,224 @@ const ContactSupport = () => {
         message: "",
       });
     } catch (err) {
-      toast.error("❌ Failed to send your message. Please try again later.");
+      console.error("Error:", err);
+      setError(
+        err.message || "Failed to send your message. Please try again later."
+      );
+      toast.error(
+        err.message || "❌ Failed to send your message. Please try again later."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // Field animations
+  const inputVariants = {
+    focus: { scale: 1.02, transition: { duration: 0.2 } },
+    blur: { scale: 1, transition: { duration: 0.2 } },
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 px-4 sm:px-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 12 }}
-        className="max-w-3xl mx-auto py-12 px-6"
+        className="max-w-3xl mx-auto"
       >
-        <h1 className="text-3xl font-extrabold text-indigo-400 mb-6 text-center">
-          Contact Support
-        </h1>
-        <p className="text-gray-400 mb-8 text-center">
-          Have a question or need assistance? Fill out the form below, and we'll
-          get back to you as soon as possible.
-        </p>
+        <div className="text-center mb-10">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-4"
+          >
+            Contact Support
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="text-gray-300 max-w-xl mx-auto"
+          >
+            Have a question or need assistance? Fill out the form below, and
+            we'll get back to you as soon as possible.
+          </motion.p>
+        </div>
 
-        <form
+        <motion.form
           onSubmit={handleSubmit}
-          className="bg-white/10 backdrop-blur-lg border border-gray-700 rounded-2xl shadow-lg p-6 space-y-6"
+          className="bg-gray-800/50 backdrop-blur-lg border border-gray-700 rounded-2xl shadow-2xl p-8 space-y-6 relative overflow-hidden"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
         >
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full -mr-16 -mt-16 blur-xl"></div>
+          <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-500/10 rounded-full -ml-20 -mb-20 blur-xl"></div>
+
           {/* Name */}
-          <div>
-            <label className="block text-gray-300 font-medium mb-2">
+          <div className="relative">
+            <label className="block text-gray-200 font-medium mb-2 text-sm">
               Your Name
             </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-              placeholder="Enter your name"
-            />
+            <motion.div
+              variants={inputVariants}
+              whileFocus="focus"
+              whileTap="focus"
+              whileHover={{ scale: 1.01 }}
+            >
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-900/70 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                placeholder="Enter your name"
+                required
+              />
+            </motion.div>
           </div>
 
           {/* Email */}
-          <div>
-            <label className="block text-gray-300 font-medium mb-2">
+          <div className="relative">
+            <label className="block text-gray-200 font-medium mb-2 text-sm">
               Your Email
             </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-              placeholder="Enter your email"
-            />
+            <motion.div
+              variants={inputVariants}
+              whileFocus="focus"
+              whileTap="focus"
+              whileHover={{ scale: 1.01 }}
+            >
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-900/70 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                placeholder="Enter your email"
+                required
+              />
+            </motion.div>
           </div>
 
           {/* Subject */}
-          <div>
-            <label className="block text-gray-300 font-medium mb-2">
+          <div className="relative">
+            <label className="block text-gray-200 font-medium mb-2 text-sm">
               Subject
             </label>
-            <input
-              type="text"
-              name="subject"
-              value={formData.subject}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-              placeholder="Subject of your message"
-            />
+            <motion.div
+              variants={inputVariants}
+              whileFocus="focus"
+              whileTap="focus"
+              whileHover={{ scale: 1.01 }}
+            >
+              <input
+                type="text"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-900/70 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                placeholder="Subject of your message"
+                required
+              />
+            </motion.div>
           </div>
 
           {/* Message */}
-          <div>
-            <label className="block text-gray-300 font-medium mb-2">
+          <div className="relative">
+            <label className="block text-gray-200 font-medium mb-2 text-sm">
               Message
             </label>
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              rows="5"
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-              placeholder="Write your message here..."
-            />
+            <motion.div
+              variants={inputVariants}
+              whileFocus="focus"
+              whileTap="focus"
+              whileHover={{ scale: 1.01 }}
+            >
+              <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                rows="5"
+                className="w-full px-4 py-3 bg-gray-900/70 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                placeholder="Write your message here..."
+                required
+              />
+            </motion.div>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="text-red-500 bg-red-800/30 p-3 rounded-lg border border-red-600">
-              {error}
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-red-300 bg-red-900/30 p-4 rounded-lg border border-red-700 text-sm"
+            >
+              <div className="flex items-start">
+                <svg
+                  className="w-5 h-5 text-red-400 mr-2 mt-0.5 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zm-1 9a1 1 0 01-1-1v-4a1 1 0 112 0v4a1 1 0 01-1 1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <span>{error}</span>
+              </div>
+            </motion.div>
           )}
 
           {/* Submit Button */}
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{
+              scale: 1.03,
+              boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.3)",
+            }}
+            whileTap={{ scale: 0.97 }}
             type="submit"
-            className="w-full px-4 py-3 bg-indigo-500 text-white rounded-lg shadow-md hover:bg-indigo-400 transition"
+            disabled={isSubmitting}
+            className="w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg shadow-lg hover:from-indigo-500 hover:to-purple-500 font-medium transition duration-300 flex justify-center items-center space-x-2 disabled:opacity-70"
           >
-            Send Message
+            {isSubmitting ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <span>Sending...</span>
+              </>
+            ) : (
+              "Send Message"
+            )}
           </motion.button>
-        </form>
+
+          <p className="text-gray-400 text-xs text-center mt-4">
+            We typically respond within 24-48 business hours.
+          </p>
+        </motion.form>
       </motion.div>
     </div>
   );

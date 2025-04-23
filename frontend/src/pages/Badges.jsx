@@ -29,7 +29,7 @@ const Badges = () => {
     const fetchData = async () => {
       try {
         // console.log(user);
-        
+
         if (user) {
           const [badgesData, pointsData] = await Promise.all([
             getUserBadges(user._id),
@@ -46,10 +46,15 @@ const Badges = () => {
           setUser(pointsData.data);
         }
 
-        const leaderboardData = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/users/leaderboard`
-        );
+        const [leaderboardData, allBadgesData] = await Promise.all([
+          axios.get(
+            `${import.meta.env.VITE_API_BASE_URL}/api/users/leaderboard`
+          ),
+          getAllBadges(),
+        ]);
         setLeaderboard(leaderboardData.data);
+        setAllBadges(allBadgesData);
+        setBadgesLoaded(true); 
       } catch (error) {
         console.error("Error fetching data:", error);
       }

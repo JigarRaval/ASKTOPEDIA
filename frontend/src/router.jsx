@@ -21,6 +21,8 @@ import ContactSupport from "./pages/ContactSupport";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import SettingsPage from "./pages/SettingsPage";
 import Bookmarks from "./pages/Bookmarks";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 
 const RoutesList = () => {
   return (
@@ -29,6 +31,8 @@ const RoutesList = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/my-questions" element={<MyQuestions />} />
       <Route path="/my-answers" element={<MyAnswers />} />
       <Route path="/edit-profile" element={<EditProfile />} />
@@ -38,7 +42,10 @@ const RoutesList = () => {
 
       {/* Protected Routes (Requires authentication) */}
       <Route path="/badges" element={<ProtectedRoute component={Badges} />} />
-      <Route path="/settings" element={<ProtectedRoute component={SettingsPage} />} />
+      <Route
+        path="/settings"
+        element={<ProtectedRoute component={SettingsPage} />}
+      />
       <Route path="/home" element={<ProtectedRoute component={Home} />} />
       <Route
         path="/dashboard"
@@ -56,7 +63,10 @@ const RoutesList = () => {
         element={<ProtectedRoute component={AdminPanel} />}
       />
       <Route path="/badges" element={<ProtectedRoute component={Badges} />} />
-      <Route path="/bookmarks" element={<ProtectedRoute component={Bookmarks} />} />
+      <Route
+        path="/bookmarks"
+        element={<ProtectedRoute component={Bookmarks} />}
+      />
       <Route path="/reports" element={<ProtectedRoute component={Reports} />} />
 
       {/* Catch-all Route */}

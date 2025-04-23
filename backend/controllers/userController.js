@@ -1,15 +1,28 @@
 import User from "../models/User.js";
 import Question from "../models/Question.js";
 import Answer from "../models/Answer.js";
+import Activity from "../models/Activity.js";
+
 import {
   checkAndAssignBadges,
   checkMilestoneBadges,
 } from "./badgeController.js";
 
 // ✅ Get All Users (for Dropdown)
+export const getMyActivities = async (req, res) => {
+  try {
+    const activities = await Activity.find({ user: req.user._id }).sort({
+      createdAt: -1,
+    }); // latest first
+    res.status(200).json(activities);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch activities." });
+  }
+};
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, "name email"); // Only return necessary fields
+    const users = await User.find({}, "username email");
     res.status(200).json(users);
   } catch (error) {
     console.error("Error fetching users:", error);

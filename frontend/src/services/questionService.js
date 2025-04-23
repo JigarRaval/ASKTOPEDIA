@@ -55,3 +55,16 @@ export const toggleBookmark = async (id) => {
   const response = await axios.put(`${API_URL}/${id}/bookmark`, {}, config);
   return response.data;
 };
+export const getBookmarkedQuestions = async () => {
+  const token = localStorage.getItem("token"); // Assuming you save token in localStorage on login
+  const { data } = await axios.get(
+    `${import.meta.env.VITE_API_BASE_URL}/api/questions/bookmarks/all`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
+};
+

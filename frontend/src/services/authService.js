@@ -31,3 +31,16 @@ export const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
 };
+// Add these new functions
+export const requestPasswordReset = async (email) => {
+  const response = await axios.post(`${API_URL}/api/auth/forgot-password`, { email });
+  return response.data;
+};
+
+export const resetPassword = async (token, newPassword) => {
+  const response = await axios.post(`${API_URL}/api/auth/reset-password`, { 
+    token, 
+    newPassword 
+  });
+  return response.data;
+};
