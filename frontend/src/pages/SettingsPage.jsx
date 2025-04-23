@@ -12,6 +12,7 @@ import {
   FaInfoCircle,
   FaCog,
 } from "react-icons/fa";
+import { changePassword, deleteAccount, logout } from "../services/authService";
 
 const SettingsPage = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -21,12 +22,14 @@ const SettingsPage = () => {
     location: user?.location || "",
     bio: user?.bio || "",
     profileImage: user?.profileImage || "",
+    currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [deletePassword, setDeletePassword] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -51,22 +54,41 @@ const SettingsPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      formData.newPassword &&
-      formData.newPassword !== formData.confirmPassword
-    ) {
-      toast.error("Passwords don't match!");
-      return;
+    // Handle password change if new password is provided
+    if (formData.newPassword) {
+      if (formData.newPassword !== formData.confirmPassword) {
+        toast.error("Passwords don't match!");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        await changePassword(formData.currentPassword, formData.newPassword);
+        toast.success("Password changed successfully!");
+
+        // Clear password fields after successful change
+        setFormData({
+          ...formData,
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message || "Failed to change password."
+        );
+      } finally {
+        setLoading(false);
+      }
+      return; // Stop here if we were just changing password
     }
 
+    // Handle profile update
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const { newPassword, confirmPassword, ...updateData } = formData;
-
-      if (newPassword) {
-        updateData.password = newPassword;
-      }
+      const { currentPassword, newPassword, confirmPassword, ...updateData } =
+        formData;
 
       const response = await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/api/users/${user._id}`,
@@ -76,34 +98,34 @@ const SettingsPage = () => {
 
       setUser((prev) => ({ ...prev, ...response.data }));
       toast.success("Settings updated successfully!");
-
-      setFormData((prev) => ({
-        ...prev,
-        newPassword: "",
-        confirmPassword: "",
-      }));
     } catch (err) {
-      toast.error("Failed to update settings.");
+      toast.error(err.response?.data?.message || "Failed to update settings.");
     }
     setLoading(false);
   };
 
   const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      toast.error("Please enter your password to confirm account deletion");
+      return;
+    }
+
     if (
       window.confirm(
         "Are you sure you want to delete your account? This cannot be undone."
       )
     ) {
       try {
-        const token = localStorage.getItem("token");
-        await axios.delete(
-          `${import.meta.env.VITE_API_BASE_URL}/api/users/${user._id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        localStorage.removeItem("token");
+        setLoading(true);
+        await deleteAccount(deletePassword);
+        logout();
         window.location.href = "/";
-      } catch (err) {
-        toast.error("Failed to delete account.");
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message || "Failed to delete account."
+        );
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -258,6 +280,20 @@ const SettingsPage = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      name="currentPassword"
+                      value={formData.currentPassword}
+                      onChange={handleChange}
+                      className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white"
+                      placeholder="Required for password change"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       New Password
                     </label>
                     <input
@@ -304,13 +340,23 @@ const SettingsPage = () => {
                           This will permanently delete all your data
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={handleDeleteAccount}
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
-                      >
-                        Delete Account
-                      </button>
+                      <div className="flex flex-col space-y-2">
+                        <input
+                          type="password"
+                          value={deletePassword}
+                          onChange={(e) => setDeletePassword(e.target.value)}
+                          className="p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white"
+                          placeholder="Enter your password to confirm"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleDeleteAccount}
+                          disabled={loading}
+                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition disabled:opacity-50"
+                        >
+                          {loading ? "Deleting..." : "Delete Account"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

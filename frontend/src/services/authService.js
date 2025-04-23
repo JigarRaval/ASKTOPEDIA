@@ -44,3 +44,26 @@ export const resetPassword = async (token, newPassword) => {
   });
   return response.data;
 };
+export const changePassword = async (currentPassword, newPassword) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post(
+    `${API_URL}/api/auth/change-password`,
+    { currentPassword, newPassword },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
+
+export const deleteAccount = async (password) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post(
+    `${API_URL}/api/auth/delete-account`,
+    { password },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
