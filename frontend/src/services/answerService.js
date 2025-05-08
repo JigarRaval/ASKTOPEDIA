@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/answers";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/answers`;
 
 export const postAnswer = async (answerData, token) => {
   const response = await axios.post(API_URL, answerData, {
