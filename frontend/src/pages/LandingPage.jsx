@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaRocket, FaGlobe, FaLightbulb, FaQuoteLeft } from "react-icons/fa";
 import { SiTypescript, SiReact, SiNodedotjs } from "react-icons/si";
-
+import LandingPageImage from "../assets/landingPage.png";
 const LandingPage = () => {
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white px-6 overflow-hidden">
@@ -94,7 +94,7 @@ const LandingPage = () => {
         >
           <img
             className="w-full max-w-lg rounded-xl shadow-2xl border-4 border-indigo-500/20"
-            src="/src/assets/landingPage.png"
+            src={LandingPageImage}
             alt="Asktopedia Community"
           />
           <motion.div
