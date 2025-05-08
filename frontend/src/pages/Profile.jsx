@@ -373,13 +373,7 @@ return (
                     description: "Achievements unlocked",
                   },
 
-                  {
-                    label: "Bookmarks",
-                    value: stats.bookmarks,
-                    icon: FiBookmark,
-                    color: "bg-gradient-to-br from-pink-600 to-rose-600",
-                    description: "Saved content",
-                  },
+
                 ].map((stat, index) => (
                   <div
                     key={index}
